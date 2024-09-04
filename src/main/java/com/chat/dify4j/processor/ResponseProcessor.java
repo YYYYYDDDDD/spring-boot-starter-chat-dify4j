@@ -56,7 +56,7 @@ public abstract class ResponseProcessor {
             fullAnswer.append(bodyNode.asText());
             // 使用者自定义修改
             eventPublisher.publishEvent(new CustomerRebuildAnswerEvent(this, threadLocalStringBuilder));
-            emitter.send(threadLocalStringBuilder.get().toString(), org.springframework.http.MediaType.TEXT_EVENT_STREAM);
+            emitter.send(bodyNode.asText(), org.springframework.http.MediaType.TEXT_EVENT_STREAM);
         }
     }
 
