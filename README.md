@@ -1,4 +1,4 @@
-# java对接dify应用的API
+# java对接dify应用的API-springboot-starter版本
 
 # 项目简介
 [Dify](https://cloud.dify.ai/)是一款开源的大语言模型(LLM) 应用开发平台。它融合了后端即服务（Backend as Service）和 LLMOps 的理念，使开发者可以快速搭建生产级的生成式 AI 应用。
@@ -134,5 +134,20 @@ public class DifyApplicationResponse {
     @JsonProperty("task_id")
     private String taskId;
 
+}
+```
+### 自定义重构或修改dify返回的结果
+有时，对话返回的结果，尤其是工作流，可能要稍作修改再返回给前端
+实现`ICustomerRebuildAnswerListener`接口
+```java
+@Component
+public class CustomerRebuildAnswerListener implements ICustomerRebuildAnswerListener{
+    @Override
+    public void rebuildAnswer(CustomerRebuildAnswerEvent event) {
+        StringBuilder stringBuilder = event.getBody().get();
+        // 清空或者自行修改
+        stringBuilder.setLength(0);
+        stringBuilder.append("this is customer rebuild answer");
+    }
 }
 ```
