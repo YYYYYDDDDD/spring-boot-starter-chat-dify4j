@@ -3,6 +3,7 @@ package com.chat.dify4j.processor;
 import cn.hutool.core.util.StrUtil;
 import com.chat.dify4j.chatcomplete.event.ChatCompleteEvent;
 import com.chat.dify4j.model.DifyApplicationResponse;
+import com.chat.dify4j.rebuild.event.CustomerRebuildAnswerEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public abstract class ResponseProcessor {
     abstract public void processLine(String line, SseEmitter emitter) throws IOException;
 
     /**
-     * 像前端发送流
+     * 向前端发送流
      * @param emitter SseEmitter对象
      * @param bodyNode 待发送的bodyNode对象
      */
@@ -53,7 +54,9 @@ public abstract class ResponseProcessor {
         if (!bodyNode.isMissingNode() && !bodyNode.isNull()) {
             StringBuilder fullAnswer = threadLocalStringBuilder.get();
             fullAnswer.append(bodyNode.asText());
-            emitter.send(bodyNode.asText(), org.springframework.http.MediaType.TEXT_EVENT_STREAM);
+            // 使用者自定义修改
+            eventPublisher.publishEvent(new CustomerRebuildAnswerEvent(this, threadLocalStringBuilder));
+            emitter.send(threadLocalStringBuilder.get().toString(), org.springframework.http.MediaType.TEXT_EVENT_STREAM);
         }
     }
 
